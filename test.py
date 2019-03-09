@@ -34,7 +34,7 @@ import keras
 from keras import backend as K
 
 
-
+# 경준
 def load_songs(song_folder):
     song_specs = []
     idx_to_genre = []
@@ -64,7 +64,7 @@ librosa.display.specshow(librosa.power_to_db(song_specs[101].T,
 
 
 
-
+# 준영
 def show_spectogram(show_genre):
     show_genre = genre_to_idx[show_genre]
     specs = []
@@ -81,7 +81,7 @@ def show_spectogram(show_genre):
 
 show_spectogram('classical')
 
-
+# 희유
 def lstm_model(input_shape):
     inputs = Input(shape=input_shape, name='input')
     lstm_1 = LSTM(units=128, return_sequences=False)(inputs)
@@ -95,7 +95,7 @@ def lstm_model(input_shape):
                   metrics=['accuracy'])
     return model
 
-
+#준혁
 def cnn_model(input_shape):
     inputs = Input(input_shape)
     x = inputs
@@ -127,7 +127,7 @@ def cnn_model(input_shape):
 model = cnn_model((128, 128))
 model.summary()
 
-
+# 완기
 def split_10(x, y):
     s = x.shape
     s = (s[0] * 10, s[1] // 10, s[2])
