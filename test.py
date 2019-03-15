@@ -83,11 +83,48 @@ show_spectogram('classical')
 
 # 희유
 def lstm_model(input_shape):
+    '''Create LSTM MODEL
+
+    Parameters
+    ----------
+    input_shape : tuple
+        (input_shape_row, input_shape_col)
+
+    Returns
+    -------
+    model : object
+        keras LSTM object
+
+    Note
+    ----
+    Input
+        케라스모델에게 Input shape를 알려주며 텐서로 인스턴스화.
+    LSTM
+        units : output의 공간을 할당합니다. 현재는 128개의 공간을 만듬.
+        return_sequences : bool, 출력 시퀀스의 마지막 출력을 반환할지 아니면 전체 시퀀스를 반환할지 지정.
+    Dense
+        입력과 출력을 모두 연결. fully connected
+        입력 뉴런 수에 상관없이 출력 뉴런 수를 자유롭게 설정할 수 있기 때문에 출력층으로 많이 사용.
+        activation 함수를 지정.
+    Model
+        Input 과 output을 지정하여 모델을 생성합니다.
+        현재 구성 : inputs -> lstm_1 -> dense2
+    optimizers
+        최적화 함수를 설정. 현재는 SGD. 이외에는 RMSprop, Adagrad, Adadelta, Adam 등 존재
+        lr : Learning rate. lr > 0
+        momentum : 최적화 방향의 가속도를 지정하고 진동을 줄임.
+        decay : 업데이트에 대한 학습 속도 설정
+        nesterov : Nesterov momentum 적용 유무
+
+        모멘텀 : 누적된 과거 그래디언트가 지향하고 있는 어떤 방향을 현재 그래디언트에 보정하려는 방식.
+        네스테로프 모멘텀 : 모멘텀 알고리즘을 개선한 것으로 관성의 효과로 최적값을 지나칠 수 있는 문제를 방지.
+    compile
+        Cost Function과 최적화 함수를 설정하고 모델을 compile합니다.
+    '''
+
     inputs = Input(shape=input_shape, name='input')
     lstm_1 = LSTM(units=128, return_sequences=False)(inputs)
-
     dense2 = Dense(10, activation='softmax')(lstm_1)
-
     model = Model(inputs=[inputs], outputs=[dense2])
     sgd = keras.optimizers.SGD(lr=0.0003, momentum=0.9, decay=1e-5, nesterov=True)
     model.compile(loss=keras.losses.categorical_crossentropy,
