@@ -165,6 +165,28 @@ model = cnn_model((128, 128))
 model.summary()
 
 # 완기
+    '''Split Songs
+
+    Parameters
+    ----------
+    x.shape : tuple
+
+    Returns
+    -------
+    x.reshape(), np.repeat()object
+        
+    Note
+    ----
+    Genres_One_hot
+        각 장르를 one hot encoding 하여 분류 체계를 만든다.
+    x_train, X_test, y_train, y_test = train_test_split()
+        song_specs 와 장르의 train/test set를 구성하고,
+        이어서 split_10 함수를 사용하여 10조각으로 나눈다
+    
+    compile
+        Cost Function과 최적화 함수를 설정하고 모델을 compile합니다.
+    '''
+
 def split_10(x, y):
     s = x.shape
     s = (s[0] * 10, s[1] // 10, s[2])
@@ -199,11 +221,28 @@ history = model.fit(x_train, y_train,
 
 model.save('zoo/15/song_classify.h5')
 
+
+    '''UnSplit values
+
+    Parameters
+    ----------
+    model.predict(x_test), y_test
+        
+    Returns
+    -------
+    model : x.reshape(), np.repeat()object
+        x_test를 100으로 나누고 이를 argmax 적용하여 인덱스 생성
+        인덱스를 10으로 나눠 라벨 세트로 전환
+
+    Note
+    ----
+
+    '''
+
 def unsplit(values):
     chunks = np.split(values, 100)
     return np.array([np.argmax(chunk) % 10 for chunk in chunks])
 
-pred_values = model.predict(x_test)
-predictions = unsplit(pred_values)
+predictions = unsplit(model.predict(x_test))
 truth = unsplit(y_test)
 accuracy_score(predictions, truth)
