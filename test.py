@@ -35,6 +35,16 @@ from keras import backend as K
 
 
 # 경준
+       '''
+       
+       song_folder 위치로부터 노래 파일을 로드하고,
+       장르를 인덱스의 길이로 변경
+       
+       librosa 패키지로부터 멜스펙트럼을 계산하고
+       화면에 출력
+       
+       '''
+    
 def load_songs(song_folder):
     song_specs = []
     idx_to_genre = []
