@@ -35,15 +35,15 @@ from keras import backend as K
 
 
 # 경준
-       '''
-       
-       song_folder 위치로부터 노래 파일을 로드하고,
-       장르를 인덱스의 길이로 변경
-       
-       librosa 패키지로부터 멜스펙트럼을 계산하고
-       화면에 출력
-       
-       '''
+'''
+
+song_folder 위치로부터 노래 파일을 로드하고,
+장르를 인덱스의 길이로 변경
+
+librosa 패키지로부터 멜스펙트럼을 계산하고
+화면에 출력
+
+'''
     
 def load_songs(song_folder):
     song_specs = []
@@ -72,24 +72,43 @@ librosa.display.specshow(librosa.power_to_db(song_specs[101].T,
                           y_axis='mel', fmax=8000,
                           x_axis='time')
 
-
-
 # 준영
 def show_spectogram(show_genre):
+    ''' show_spectogram
+    genre 이름을 넣으면 genre에 해당하는 spectogram을 볼 수 있음
+    :param show_genre: 사용자가 보려는 장르의 이름
+    :return:
+    '''
     show_genre = genre_to_idx[show_genre]
+    # genre_to_idx dictionary를 통해 genre에 해당하는 index 얻기
     specs = []
     for spec, genre in zip(song_specs, genres):
+        # song 의 melspec 정보를 가진 리스트인 song_specs와 genre 정보를 가진 리스트인 genres를 zip 한다
+        # 그럼으로써 iteration을 돌 때 spec, genre에 각각 song 정보와 genre 정보가 assign 된다.
+
         if show_genre == genre:
+            # song_specs, genres에는 모든 song에 대한 정보가 담겨 있으므로
+            # 사용자가 보려는 장르만 보기 위해 if 문 사용
             specs.append(spec)
+            # 장르에 해당하는 melspec 값을 리스트에 할당
             if len(specs) == 25:
                 break
+            # 리스트의 길이가 25개 일경우 for문 빠져나가기
     if not specs:
+        # 사용자가 보고 싶어하는 장르가 song에 존재하지 않으면 specs이 비어 있을 테고,
+        # 해당 장르를 찾지 못했으므로 not found 반환
         return 'not found!'
     x = np.concatenate(specs, axis=1)
-    x = (x - x.min()) / (x.max() - x.min())
-    plt.imshow((x *20).clip(0, 1.0))
+    # specs내에 위치한 값들을 axis=1 축으로 이어 붙인다.
+    x = (x-x.min()) / (x.max()-x.min())
+    # normalisation
+    plt.imshow((x * 20).clip(0, 1.0))
+    # normalisation
+
 
 show_spectogram('classical')
+
+
 
 # 희유
 def lstm_model(input_shape):
@@ -175,27 +194,27 @@ model = cnn_model((128, 128))
 model.summary()
 
 # 완기
-    '''Split Songs
+'''Split Songs
 
-    Parameters
-    ----------
-    x.shape : tuple
+Parameters
+----------
+x.shape : tuple
 
-    Returns
-    -------
-    x.reshape(), np.repeat()object
-        
-    Note
-    ----
-    Genres_One_hot
-        각 장르를 one hot encoding 하여 분류 체계를 만든다.
-    x_train, X_test, y_train, y_test = train_test_split()
-        song_specs 와 장르의 train/test set를 구성하고,
-        이어서 split_10 함수를 사용하여 10조각으로 나눈다
+Returns
+-------
+x.reshape(), np.repeat()object
     
-    compile
-        Cost Function과 최적화 함수를 설정하고 모델을 compile합니다.
-    '''
+Note
+----
+Genres_One_hot
+    각 장르를 one hot encoding 하여 분류 체계를 만든다.
+x_train, X_test, y_train, y_test = train_test_split()
+    song_specs 와 장르의 train/test set를 구성하고,
+    이어서 split_10 함수를 사용하여 10조각으로 나눈다
+
+compile
+    Cost Function과 최적화 함수를 설정하고 모델을 compile합니다.
+'''
 
 def split_10(x, y):
     s = x.shape
@@ -232,22 +251,22 @@ history = model.fit(x_train, y_train,
 model.save('zoo/15/song_classify.h5')
 
 
-    '''UnSplit values
+'''UnSplit values
 
-    Parameters
-    ----------
-    model.predict(x_test), y_test
-        
-    Returns
-    -------
-    model : x.reshape(), np.repeat()object
-        x_test를 100으로 나누고 이를 argmax 적용하여 인덱스 생성
-        인덱스를 10으로 나눠 라벨 세트로 전환
+Parameters
+----------
+model.predict(x_test), y_test
+    
+Returns
+-------
+model : x.reshape(), np.repeat()object
+    x_test를 100으로 나누고 이를 argmax 적용하여 인덱스 생성
+    인덱스를 10으로 나눠 라벨 세트로 전환
 
-    Note
-    ----
+Note
+----
 
-    '''
+'''
 
 def unsplit(values):
     chunks = np.split(values, 100)
